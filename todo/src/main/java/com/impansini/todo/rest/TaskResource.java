@@ -1,6 +1,7 @@
 package com.impansini.todo.rest;
 
 import com.impansini.todo.domain.Task;
+import com.impansini.todo.kafka.KafkaProducer;
 import com.impansini.todo.repository.TaskRepository;
 import com.impansini.todo.service.TaskService;
 import jakarta.validation.Valid;
@@ -26,9 +27,12 @@ public class TaskResource {
 
     private final TaskRepository taskRepository;
 
-    public TaskResource(TaskService taskService, TaskRepository taskRepository) {
+    private final KafkaProducer kafkaProducer;
+
+    public TaskResource(TaskService taskService, TaskRepository taskRepository, KafkaProducer kafkaProducer) {
         this.taskService = taskService;
         this.taskRepository = taskRepository;
+        this.kafkaProducer = kafkaProducer;
     }
 
     @PostMapping("/tasks")
@@ -38,6 +42,7 @@ public class TaskResource {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "A new task cannot already have an ID");
         }
         Task result = taskService.save(task);
+        kafkaProducer.sendMessage(result.toString());
         return ResponseEntity
                 .created(new URI("/api/tasks/" + result.getId()))
                 .body(result);
