@@ -24,7 +24,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/auth/api")
 public class UserResource {
 
     private final Logger log = LoggerFactory.getLogger(UserResource.class);
