@@ -38,4 +38,10 @@ public class UserService {
         log.debug("Request to get a user by username: {}", username);
         return userRepository.findByUsername(username);
     }
+
+    @Transactional(readOnly = true)
+    public Optional<User> findByEmail(String email) {
+        log.debug("Request to get a user by email: {}", email);
+        return userRepository.findByEmail(email);
+    }
 }

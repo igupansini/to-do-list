@@ -47,6 +47,12 @@ public class UserResource {
         if (user.getId() != null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "A new user cannot already have an ID");
         }
+        if (userService.findByEmail(user.getEmail()).isPresent()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email is already in use");
+        }
+        if (userService.findByUsername(user.getUsername()).isPresent()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username is already in use");
+        }
         Optional<Authority> userAuthority = authorityRepository.findByName("USER");
         if (userAuthority.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "USER authority not found");
