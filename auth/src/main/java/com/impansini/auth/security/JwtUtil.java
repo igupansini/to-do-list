@@ -49,7 +49,6 @@ public class JwtUtil {
                 .build();
         DecodedJWT jwt = verifier.verify(token);
         String authorities = jwt.getClaim("authorities").asString();
-        System.out.println(authorities);
         return List.of(authorities.split(",")).stream()
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
