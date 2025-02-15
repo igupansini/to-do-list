@@ -10,7 +10,6 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -27,8 +26,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String username = JwtUtil.validateToken(token);
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            var authorities = JwtUtil.getAuthorities(token);
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                    username, null, new ArrayList<>());
+                    username, null, authorities);
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
