@@ -2,6 +2,7 @@ package com.impansini.auth.service;
 
 import com.impansini.auth.domain.User;
 import com.impansini.auth.repository.UserRepository;
+import org.apache.commons.lang.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -43,5 +45,18 @@ public class UserService {
     public Optional<User> findByEmail(String email) {
         log.debug("Request to get a user by email: {}", email);
         return userRepository.findByEmail(email);
+    }
+
+    @Transactional
+    public Optional<User> requestPasswordReset(String email) {
+        log.debug("Request to generate password reset key for email: {}", email);
+        return userRepository
+                .findByEmail(email)
+                .map(user -> {
+                    user.setPasswordResetKey(RandomStringUtils.random(10, true, true));
+                    user.setPasswordResetDate(LocalDateTime.now());
+                    userRepository.save(user);
+                    return user;
+                });
     }
 }

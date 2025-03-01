@@ -1,11 +1,13 @@
 package com.impansini.auth.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -38,6 +40,12 @@ public class User implements Serializable {
     @Column(nullable = false)
     private String password;
 
+    @Size(max = 10)
+    @JsonIgnore
+    private String passwordResetKey;
+
+    private LocalDateTime passwordResetDate;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_authorities",
@@ -57,20 +65,20 @@ public class User implements Serializable {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getUsername() {
         return username;
     }
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getEmail() {
@@ -87,6 +95,22 @@ public class User implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getPasswordResetKey() {
+        return passwordResetKey;
+    }
+
+    public void setPasswordResetKey(String passwordResetKey) {
+        this.passwordResetKey = passwordResetKey;
+    }
+
+    public LocalDateTime getPasswordResetDate() {
+        return passwordResetDate;
+    }
+
+    public void setPasswordResetDate(LocalDateTime passwordResetDate) {
+        this.passwordResetDate = passwordResetDate;
     }
 
     public Set<Authority> getAuthorities() {
@@ -117,6 +141,8 @@ public class User implements Serializable {
                 ", username='" + username + '\'' +
                 ", email='" + email + '\'' +
                 //", password='" + password + '\'' +
+                //", passwordResetKey='" + passwordResetKey + '\'' +
+                ", passwordResetDate=" + passwordResetDate +
                 ", authorities=" + authorities +
                 '}';
     }

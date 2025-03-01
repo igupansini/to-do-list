@@ -74,4 +74,15 @@ public class UserResource {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password");
         }
     }
+
+    @PostMapping("/reset-password/start")
+    public void requestPasswordReset(@RequestBody String email) {
+        log.debug("REST request to generate password reset key for email: {}", email);
+        Optional<User> user = userService.requestPasswordReset(email);
+        if (user.isPresent()) {
+            log.debug("Password reset email should be sent here");
+        } else {
+            log.debug("Password reset requested for non existing email");
+        }
+    }
 }
