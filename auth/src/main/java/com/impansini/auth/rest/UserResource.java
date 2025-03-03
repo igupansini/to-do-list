@@ -89,7 +89,7 @@ public class UserResource {
     }
 
     @PostMapping("/reset-password/finish")
-    public void finishPasswordReset(@RequestBody KeyAndPasswordDTO keyAndPassword) {
+    public void finishPasswordReset(@Valid @RequestBody KeyAndPasswordDTO keyAndPassword) {
         log.debug("REST request to finish password reset");
         Optional<User> user = userService.completePasswordReset(keyAndPassword.getNewPassword(), keyAndPassword.getKey());
 
