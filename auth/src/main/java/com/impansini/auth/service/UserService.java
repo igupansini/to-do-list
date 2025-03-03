@@ -59,4 +59,19 @@ public class UserService {
                     return user;
                 });
     }
+
+    @Transactional
+    public Optional<User> completePasswordReset(String newPassword, String key) {
+        log.debug("Request to reset user password for key: {}", key);
+        return userRepository
+                .findByPasswordResetKey(key)
+                .filter(user -> user.getPasswordResetDate().isAfter(LocalDateTime.now().minusHours(24)))
+                .map(user -> {
+                    user.setPassword(passwordEncoder.encode(newPassword));
+                    user.setPasswordResetKey(null);
+                    user.setPasswordResetDate(null);
+                    userRepository.save(user);
+                    return user;
+                });
+    }
 }

@@ -1,4 +1,4 @@
-package com.impansini.auth.domain;
+package com.impansini.auth.domain.dto;
 
 import jakarta.validation.constraints.NotBlank;
 

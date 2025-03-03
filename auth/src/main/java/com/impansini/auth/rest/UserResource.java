@@ -1,8 +1,9 @@
 package com.impansini.auth.rest;
 
 import com.impansini.auth.domain.Authority;
-import com.impansini.auth.domain.LoginRequestDTO;
 import com.impansini.auth.domain.User;
+import com.impansini.auth.domain.dto.KeyAndPasswordDTO;
+import com.impansini.auth.domain.dto.LoginRequestDTO;
 import com.impansini.auth.repository.AuthorityRepository;
 import com.impansini.auth.security.JwtUtil;
 import com.impansini.auth.service.UserService;
@@ -64,6 +65,7 @@ public class UserResource {
 
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@Valid @RequestBody LoginRequestDTO user) {
+        log.debug("REST request to login for user: {}", user.getUsername());
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword())
@@ -83,6 +85,16 @@ public class UserResource {
             log.debug("Password reset email should be sent here");
         } else {
             log.debug("Password reset requested for non existing email");
+        }
+    }
+
+    @PostMapping("/reset-password/finish")
+    public void finishPasswordReset(@RequestBody KeyAndPasswordDTO keyAndPassword) {
+        log.debug("REST request to finish password reset");
+        Optional<User> user = userService.completePasswordReset(keyAndPassword.getNewPassword(), keyAndPassword.getKey());
+
+        if (user.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No user was found for this key");
         }
     }
 }
