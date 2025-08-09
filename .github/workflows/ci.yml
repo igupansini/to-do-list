@@ -7,6 +7,22 @@ on:
     branches: [ main ]
 
 jobs:
+  build-frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: todo-frontend
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install dependencies
+        run: npm ci
+      - name: Build Angular app
+        run: npm run build
+
   build-backend:
 
     runs-on: ubuntu-latest
